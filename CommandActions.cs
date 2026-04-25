@@ -4,6 +4,11 @@ using System.IO;
 
 public class CommandActions
 {
+    /// <summary>
+    /// Génére un mot de passe sécurisé pour le Vault
+    /// </summary>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public static string GeneratePassword(int length = 20)
     {
         const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=[{]};:>|./?";
@@ -19,6 +24,7 @@ public class CommandActions
         return password.ToString();
     }
 
+    // TODO : A SUPPRIMER
     public static void CreateVault()
     {
         string vault_path = @"C:\Users\rayan\Documents\Programming Projects\Vaultio-Project\vault.vlt";
@@ -52,6 +58,9 @@ public class CommandActions
         }
     }
 
+    /// <summary>
+    /// Ajoute une entrée au Vault
+    /// </summary>
     public static void Add()
     {
         string vault_path = @"C:\Users\rayan\Documents\Programming Projects\Vaultio-Project\vault.vlt";

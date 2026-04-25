@@ -1,3 +1,6 @@
+/// <summary>
+/// Affiche le guide du CLI
+/// </summary>
 public class Guide
 {
     public static void ShowGuide()
