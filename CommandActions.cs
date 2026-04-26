@@ -59,7 +59,7 @@ public class CommandActions
     }
 
     /// <summary>
-    /// Ajoute une entrée au Vault
+    /// Ajoute une entrée au Vault 
     /// </summary>
     public static void Add()
     {
@@ -101,7 +101,6 @@ public class CommandActions
         }
         while (string.IsNullOrEmpty(password_source) && string.IsNullOrEmpty(password_value));
 
-        Console.WriteLine(password_value);
-        Console.WriteLine(password_source);
+        File.AppendAllText(vault_path, password_source + "=" + password_value + "\n");
     }
 }
