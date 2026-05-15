@@ -40,33 +40,41 @@ public static class CryptoHelper
 
     public static void DecryptFile(string inputFile, string outputFile, string password)
     {
-        using (FileStream fsIn = new FileStream(inputFile, FileMode.Open))
+        try
         {
-            // 1. Read the salt (16 bytes)
-            byte[] salt = new byte[16];
-            fsIn.Read(salt, 0, salt.Length);
-
-            // 2. Read the IV (16 bytes)
-            byte[] iv = new byte[16];
-            fsIn.Read(iv, 0, iv.Length);
-
-            // 3. Derive the key using the password and the read salt
-            byte[] key = GenerateKey(password, salt);
-
-            // 4. Initialize AES with the key and the read IV
-            using (Aes aes = Aes.Create())
+            using (FileStream fsIn = new FileStream(inputFile, FileMode.Open))
             {
-                aes.Key = key;
-                aes.IV = iv;
+                byte[] salt = new byte[16];
+                fsIn.Read(salt, 0, salt.Length);
 
-                // 5. Decrypt the remaining data
-                using (ICryptoTransform decryptor = aes.CreateDecryptor())
-                using (CryptoStream cs = new CryptoStream(fsIn, decryptor, CryptoStreamMode.Read))
-                using (FileStream fsOut = new FileStream(outputFile, FileMode.Create))
+                byte[] iv = new byte[16];
+                fsIn.Read(iv, 0, iv.Length);
+
+                byte[] key = GenerateKey(password, salt);
+
+                using (Aes aes = Aes.Create())
                 {
-                    cs.CopyTo(fsOut);
+                    aes.Key = key;
+                    aes.IV = iv;
+                    // Ensure padding is on (it is by default)
+                    aes.Padding = PaddingMode.PKCS7;
+
+                    using (ICryptoTransform decryptor = aes.CreateDecryptor())
+                    using (FileStream fsOut = new FileStream(outputFile, FileMode.Create))
+                    {
+                        using (CryptoStream cs = new CryptoStream(fsIn, decryptor, CryptoStreamMode.Read))
+                        {
+                            cs.CopyTo(fsOut);
+                        }
+                    }
                 }
             }
+        }
+        catch (CryptographicException)
+        {
+            // Cleanup the garbage file created by the failed decryption
+            if (File.Exists(outputFile)) File.Delete(outputFile);
+            throw new Exception("Incorrect Password.");
         }
     }
 }
