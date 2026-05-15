@@ -12,9 +12,6 @@ public class CommandInit
                 string password = CommandActions.GeneratePassword();
                 Console.WriteLine(password);
                 break;
-            case "setup-vault":
-                CommandActions.CreateVault();
-                break;
             case "add":
                 CommandActions.Add();
                 break;
