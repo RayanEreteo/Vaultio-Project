@@ -1,6 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-using System.IO;
 
 public class CommandActions
 {
@@ -8,7 +7,7 @@ public class CommandActions
     /// Génére un mot de passe sécurisé pour le Vault
     /// </summary>
     /// <param name="length"></param>
-    /// <returns></returns>
+    /// <returns>Mot De Passe</returns>
     public static string GeneratePassword(int length = 20)
     {
         const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-+=[{]};:>|./?";
@@ -22,40 +21,6 @@ public class CommandActions
         }
 
         return password.ToString();
-    }
-
-    // TODO : A SUPPRIMER
-    public static void CreateVault()
-    {
-        string vault_path = @"C:\Users\rayan\Documents\Programming Projects\Vaultio-Project\vault.vlt";
-        string temp_path = vault_path + ".tmp";
-
-        if (File.Exists(vault_path))
-        {
-            Console.WriteLine("=== VAULT ALREADY EXISTS ===");
-            return;
-        }
-
-        string? password;
-        do
-        {
-            Console.WriteLine("Please Enter Your Password (3 characters minimum) : ");
-            password = Console.ReadLine();
-        }
-        while (string.IsNullOrEmpty(password) || password.Length < 3);
-
-        File.WriteAllText(temp_path, "VaultInitialized=True\n");
-
-        try
-        {
-            CryptoHelper.EncryptFile(temp_path, vault_path, password);
-            File.Delete(temp_path);
-            Console.WriteLine("Vault created and encrypted successfully.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error encrypting vault: {ex.Message}");
-        }
     }
 
     /// <summary>
@@ -89,6 +54,10 @@ public class CommandActions
             Console.WriteLine("Info : Vault will be created");
             Console.ForegroundColor = ConsoleColor.White;
         }
+        else
+        {
+            CryptoHelper.DecryptFile(vault_path, temp_path, vault_key);
+        }
 
         string? password_source, password_value;
         do
@@ -99,8 +68,12 @@ public class CommandActions
             Console.WriteLine("Please enter your password for this source :");
             password_value = Console.ReadLine();
         }
-        while (string.IsNullOrEmpty(password_source) && string.IsNullOrEmpty(password_value));
+        while (string.IsNullOrEmpty(password_source) || string.IsNullOrEmpty(password_value));
 
         File.AppendAllText(vault_path, password_source + "=" + password_value + "\n");
+
+        CryptoHelper.EncryptFile(vault_path, temp_path, vault_key);
+        File.Delete(vault_path);
+        File.Move(temp_path, vault_path);
     }
 }
