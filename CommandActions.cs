@@ -84,7 +84,7 @@ public class CommandActions
         string? vault_key = CryptoHelper.RequestPassword(vault_exist);
 
         CryptoHelper.DecryptFile(vault_path, temp_path, vault_key);
-        Console.WriteLine(File.ReadAllText(temp_path));
+        VltParser.GetKeyPair(temp_path);
 
         File.Delete(temp_path);
     }
