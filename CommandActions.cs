@@ -39,6 +39,8 @@ public class CommandActions
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Info : Vault will be created");
             Console.ForegroundColor = ConsoleColor.White;
+
+            File.WriteAllText(temp_path, "");
         }
         else
         {
@@ -56,11 +58,10 @@ public class CommandActions
         }
         while (string.IsNullOrEmpty(password_source) || string.IsNullOrEmpty(password_value));
 
-        File.AppendAllText(vault_path, password_source + "=" + password_value + "\n");
+        File.AppendAllText(temp_path, password_source + "=" + password_value + "\n");
 
-        CryptoHelper.EncryptFile(vault_path, temp_path, vault_key);
-        File.Delete(vault_path);
-        File.Move(temp_path, vault_path);
+        CryptoHelper.EncryptFile(temp_path, vault_path, vault_key);
+        File.Delete(temp_path);
     }
 
     /// <summary>
@@ -76,9 +77,15 @@ public class CommandActions
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("No vault configured, please run the 'add' command to add a vault.");
+            Console.ForegroundColor = ConsoleColor.White;
             return;
         }
 
-        CryptoHelper.DecryptFile(vault_path, temp_path, null);
+        string? vault_key = CryptoHelper.RequestPassword(vault_exist);
+
+        CryptoHelper.DecryptFile(vault_path, temp_path, vault_key);
+        Console.WriteLine(File.ReadAllText(temp_path));
+
+        File.Delete(temp_path);
     }
 }
