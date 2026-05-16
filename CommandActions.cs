@@ -32,21 +32,7 @@ public class CommandActions
         bool vault_exist = File.Exists(vault_path);
         string temp_path = vault_path + ".tmp";
 
-        string? vault_key;
-        do
-        {
-            if (vault_exist)
-            {
-                Console.WriteLine("Please Enter Your Password :");
-            }
-            else
-            {
-                Console.WriteLine("Please setup a password for your vault (3 characters minimum) :");
-            }
-
-            vault_key = Console.ReadLine();
-        }
-        while (string.IsNullOrEmpty(vault_key) || vault_key.Length < 3);
+        string? vault_key = CryptoHelper.RequestPassword(vault_exist);
 
         if (!vault_exist)
         {
@@ -75,5 +61,24 @@ public class CommandActions
         CryptoHelper.EncryptFile(vault_path, temp_path, vault_key);
         File.Delete(vault_path);
         File.Move(temp_path, vault_path);
+    }
+
+    /// <summary>
+    /// Récupére la liste compléte de mot de passe
+    /// </summary>
+    public static void ListAll()
+    {
+        string vault_path = @"C:\Users\rayan\Documents\Programming Projects\Vaultio-Project\vault.vlt";
+        bool vault_exist = File.Exists(vault_path);
+        string temp_path = vault_path + ".tmp";
+
+        if (!vault_exist)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("No vault configured, please run the 'add' command to add a vault.");
+            return;
+        }
+
+        CryptoHelper.DecryptFile(vault_path, temp_path, null);
     }
 }

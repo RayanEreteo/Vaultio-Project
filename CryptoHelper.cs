@@ -77,4 +77,25 @@ public static class CryptoHelper
             throw new Exception("Incorrect Password.");
         }
     }
+
+    public static string RequestPassword(bool vault_exist)
+    {
+        string? vault_key;
+        do
+        {
+            if (vault_exist)
+            {
+                Console.WriteLine("Please Enter Your Password :");
+            }
+            else
+            {
+                Console.WriteLine("Please setup a password for your vault (3 characters minimum) :");
+            }
+
+            vault_key = Console.ReadLine();
+        }
+        while (string.IsNullOrEmpty(vault_key) || vault_key.Length < 3);
+
+        return vault_key;
+    }
 }
