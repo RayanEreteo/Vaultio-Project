@@ -1,7 +1,8 @@
 public class VltParser
 {
-    public static void GetValueOfKey(string vault_path, string key)
+    public static void GetKeyPair(string temp_path)
     {
-        // TODO
+        Console.WriteLine(File.ReadAllText(temp_path));
+
     }
 }
