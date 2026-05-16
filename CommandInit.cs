@@ -13,7 +13,10 @@ public class CommandInit
                 Console.WriteLine(password);
                 break;
             case "add":
-                CommandActions.Add();
+                CommandActions.Add();            
+                break;
+            case "list":
+                CommandActions.ListAll();
                 break;
         }
     }
