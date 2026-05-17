@@ -88,4 +88,30 @@ public class CommandActions
 
         File.Delete(temp_path);
     }
+
+    public static void GetSolo(string[] userArgs)
+    {
+        string value_source = userArgs[2];
+
+        string vault_path = @"C:\Users\rayan\Documents\Programming Projects\Vaultio-Project\vault.vlt";
+        bool vault_exist = File.Exists(vault_path);
+        string temp_path = vault_path + ".tmp";
+
+        if (!vault_exist)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("No vault configured, please run the 'add' command to add a vault.");
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        string? vault_key = CryptoHelper.RequestPassword(vault_exist);
+
+        CryptoHelper.DecryptFile(vault_path, temp_path, vault_key);
+        string value = VltParser.GetKeyValue(value_source, temp_path);
+
+        Console.WriteLine(value);
+
+        File.Delete(temp_path);
+    }
 }
